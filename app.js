@@ -1,9 +1,9 @@
 import axios from "axios";
+import { OPEN_WEATHER__MAP_API_KEY } from './credentials.js';
 const argv = process.argv
 const city = argv[2]
 async function printCurrentWeather(cityName) {
-    const OPEN_WEATHER__MAP_API = 'http://api.openweathermap.org/data/2.5/weather?q=' + cityName
-        + '&appid=***REMOVED***&units=metric&lang=ro';
+    const OPEN_WEATHER__MAP_API = `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
     try {
         const response = await axios.get(OPEN_WEATHER__MAP_API)
         let cast = response.data;
