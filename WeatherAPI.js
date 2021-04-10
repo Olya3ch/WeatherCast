@@ -1,43 +1,52 @@
-
-
 import axios from "axios";
-import { OPEN_WEATHER__MAP_API_KEY } from './credentials.js';
+import { OPEN_WEATHER__MAP_API_KEY } from "./credentials.js";
+import Table from "cli-table3";
+import { DateTime } from "luxon";
 
 async function getData(url) {
-    try {
-        const response = await axios.get(url);
-        let data = response.data
-        return data;
-    } catch (error) {
-        console.log(error)
-    }
-
+  try {
+    const response = await axios.get(url);
+    let data = response.data;
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function printCurrentWeather(cityName) {
-    const OPEN_WEATHER__MAP_API = `http://api.openweathermap.org/data/2.5/weather?q=${cityName}` +
-        `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
+  const OPEN_WEATHER__MAP_API =
+    `http://api.openweathermap.org/data/2.5/weather?q=${cityName}` +
+    `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
 
+  const data = await getData(OPEN_WEATHER__MAP_API);
 
-    const data = await getData(OPEN_WEATHER__MAP_API);
-
-    console.log(
-        `În ${data.name} se prognozează ${data.weather[0].description}.` +
-        `\nTemperatura curentă este de ${Math.round(data.main.temp)}°C.` +
-        `\nLong: ${data.coord.lon} Lat: ${data.coord.lat}`
-    );
-    return data.coord;
-
-
+  console.log(
+    `În ${data.name} se prognozează ${data.weather[0].description}.` +
+      `\nTemperatura curentă este de ${Math.round(data.main.temp)}°C.` +
+      `\nLong: ${data.coord.lon} Lat: ${data.coord.lat}`
+  );
+  return data.coord;
 }
 
 export async function printWeatherFor7Days({ lat, lon }) {
+  const OPEN_WEATHER__MAP_API =
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}` +
+    `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
 
-    const OPEN_WEATHER__MAP_API = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}` +
-        `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
+  const data = await getData(OPEN_WEATHER__MAP_API);
 
-    let data = await getData(OPEN_WEATHER__MAP_API)
+  const table = new Table({
+    head: ["Data", "Temp maximă", "Temp minimă", "Viteza vantului"],
+  });
+  const dailyData = data.daily;
 
-    console.log(data.daily.length);
+  dailyData.forEach((dayData) => {
+    const date = DateTime.fromSeconds(dayData.dt)
+      .setLocale("ro")
+      .toLocaleString(DateTime.DATE_MED);
 
+    const arr = [date, dayData.temp.max, dayData.temp.min, dayData.wind_speed];
+    table.push(arr);
+  });
+  console.log(table.toString());
 }
