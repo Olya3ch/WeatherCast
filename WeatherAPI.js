@@ -28,16 +28,11 @@ export async function printCurrentWeather(cityName) {
   return data.coord;
 }
 
-export async function printWeatherFor7Days({ lat, lon }) {
-  const OPEN_WEATHER__MAP_API =
-    `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}` +
-    `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
-
-  const data = await getData(OPEN_WEATHER__MAP_API);
-
+function makeForecastTable(data) {
   const table = new Table({
     head: ["Data", "Temp maximă", "Temp minimă", "Viteza vantului"],
   });
+
   const dailyData = data.daily;
 
   dailyData.forEach((dayData) => {
@@ -53,5 +48,15 @@ export async function printWeatherFor7Days({ lat, lon }) {
     ];
     table.push(arr);
   });
-  console.log(table.toString());
+  return table;
+}
+
+export async function printWeatherFor7Days({ lat, lon }) {
+  const OPEN_WEATHER__MAP_API =
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}` +
+    `&appid=${OPEN_WEATHER__MAP_API_KEY}&units=metric&lang=ro`;
+
+  const data = await getData(OPEN_WEATHER__MAP_API);
+
+  console.log(makeForecastTable(data).toString());
 }
