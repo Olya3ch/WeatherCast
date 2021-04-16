@@ -1,4 +1,5 @@
 import axios from 'axios';
+import chalk from 'chalk';
 import { OPEN_WEATHER_MAP_API_KEY } from './credentials.js';
 import Table from 'cli-table3';
 import { DateTime } from 'luxon';
@@ -31,12 +32,16 @@ async function getData(url) {
       },
     };
 
-    if ((errorDescription[error.response.data.cod]))
-      console.log(errorDescription[error.response.data.cod]);
-    else 
-      console.log("Sarean bratan. Aici ii kakaita eroare care n-am mai vazut-o")
-  
-
+    if (errorDescription[error.response.data.cod])
+      console.log(
+        chalk.red.bold.italic(errorDescription[error.response.data.cod])
+      );
+    else
+      console.log(
+        chalk.red.bold.italic(
+          'Sarean bratan. Aici ii kakaita eroare care n-am mai vazut-o'
+        )
+      );
 
     process.exit();
   }
