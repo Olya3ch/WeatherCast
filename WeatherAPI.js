@@ -16,7 +16,29 @@ async function getData(url) {
     let data = response.data;
     return data;
   } catch (error) {
-    console.log(error);
+    const errorDescription = {
+      404:
+        'Denumirea orașului nu este validă. ' +
+        'Vă rugăm verificați dacă ați introdus corect numele orașului.',
+      401: 'API key este incorectă. Vă rugăm verificați fișierul credentials.js.',
+      429: 'Ați depășit limita de cererei către OpenWeatherMap API.',
+      500: 'Ne pare rău, a apărut o eroare internă a serverului.',
+      ENOTFOUND:
+        'Nu există o conexiune cu internetul.' +
+        'Verificați setările și aparatajul pentru interent.',
+      get EAI_AGAIN() {
+        return this.ENOTFOUND;
+      },
+    };
+
+    if ((errorDescription[error.response.data.cod]))
+      console.log(errorDescription[error.response.data.cod]);
+    else 
+      console.log("Sarean bratan. Aici ii kakaita eroare care n-am mai vazut-o")
+  
+
+
+    process.exit();
   }
 }
 
@@ -44,7 +66,6 @@ export async function printCurrentWeather(cityName) {
  * @returns {Table}
  */
 function makeForecastTable(data) {
-  console.log(data);
   const table = new Table({
     head: ['Data', 'Temp maximă', 'Temp minimă', 'Viteza vantului'],
   });
