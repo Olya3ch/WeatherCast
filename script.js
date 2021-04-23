@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
+import { Table } from "./table.js";
 
-document.querySelector("table").style.display = "none";
 let inputEl = document.querySelectorAll("input");
 console.log(inputEl);
 inputEl.forEach((node) => (node.onchange = printCurrentWeather));
@@ -25,16 +25,16 @@ function printWeatherFor7Days({ lat, lon }) {
   fetch(OPEN_WEATHER_MAP_API)
     .then((response) => response.json())
     .then((data) => {
+      const table = new Table([
+        "Data",
+        "Temp max",
+        "Temp min",
+        "Viteza vantului",
+      ]);
+      console.log(table);
+
       console.log(data);
-      class WeatherOneDay {
-        constructor(data, tempMax, tempMin, vitezaVant) {
-          this.data = data;
-          this.tempMax = tempMax;
-          this.tempMin = tempMin;
-          this.vitezaVant = vitezaVant;
-        }
-      }
-      let daysArray = [];
+
       data.daily.forEach((day) => {
         //   console.log(day);
         const data = DateTime.fromSeconds(day.dt)
@@ -43,33 +43,13 @@ function printWeatherFor7Days({ lat, lon }) {
         const tempMax = day.temp.max;
         const tempMin = day.temp.min;
         const vitezaVant = day.wind_speed;
+        const _day = [data, tempMax, tempMin, vitezaVant];
 
-        const _day = new WeatherOneDay(data, tempMax, tempMin, vitezaVant);
-
-        daysArray.push(_day);
+        table.push(_day);
       });
-      console.log(daysArray);
-      let tableRows = document.querySelectorAll("tr:not(:first-child)");
-      console.log(tableRows);
-      tableRows.forEach((tr, trIndex) => {
-        console.log(tr.children, trIndex);
-        Array.from(tr.children).forEach((el, tdIndex) => {
-          switch (tdIndex) {
-            case 0:
-              el.innerText = daysArray[trIndex].data;
-              break;
-            case 1:
-              el.innerText = daysArray[trIndex].tempMax;
-              break;
-            case 2:
-              el.innerText = daysArray[trIndex].tempMin;
-              break;
-            case 3:
-              el.innerText = daysArray[trIndex].vitezaVant;
-              break;
-          }
-        });
-      });
-      document.querySelector("table").style.display = "block";
+      console.log(table);
+      const tableContainer = document.getElementById('table');
+      console.log(table.genTable())
+      tableContainer.innerHTML = table.genTable();
     });
 }
