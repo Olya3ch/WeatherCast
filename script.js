@@ -2,14 +2,13 @@ import { DateTime } from "luxon";
 import { Table } from "./table.js";
 
 let inputEl = document.querySelectorAll("input");
-console.log(inputEl);
 inputEl.forEach((node) => (node.onchange = printCurrentWeather));
 
-function printCurrentWeather(event) {
+async function printCurrentWeather(event) {
   const OPEN_WEATHER_MAP_API =
     `https://api.openweathermap.org/data/2.5/weather?q=${event.srcElement.value}` +
     `&appid=41b5f2dff98d93a61b92c9605018bb4d&units=metric&lang=ro`;
-  fetch(OPEN_WEATHER_MAP_API)
+  await fetch(OPEN_WEATHER_MAP_API)
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -18,11 +17,11 @@ function printCurrentWeather(event) {
     });
 }
 
-function printWeatherFor7Days({ lat, lon }) {
+async function printWeatherFor7Days({ lat, lon }) {
   const OPEN_WEATHER_MAP_API =
     `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}` +
     `&appid=41b5f2dff98d93a61b92c9605018bb4d&units=metric&lang=ro`;
-  fetch(OPEN_WEATHER_MAP_API)
+  await fetch(OPEN_WEATHER_MAP_API)
     .then((response) => response.json())
     .then((data) => {
       const table = new Table([
@@ -32,8 +31,6 @@ function printWeatherFor7Days({ lat, lon }) {
         "Viteza vantului",
       ]);
       console.log(table);
-
-      console.log(data);
 
       data.daily.forEach((day) => {
         //   console.log(day);
