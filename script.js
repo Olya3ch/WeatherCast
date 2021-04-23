@@ -40,16 +40,15 @@ function printWeatherFor7Days({ lat, lon }) {
         const data = DateTime.fromSeconds(day.dt)
           .setLocale("ro")
           .toLocaleString(DateTime.DATE_MED);
-        const tempMax = day.temp.max;
-        const tempMin = day.temp.min;
-        const vitezaVant = day.wind_speed;
+        const tempMax = `${day.temp.max} °C`;
+        const tempMin = `${day.temp.min} °C`;
+        const vitezaVant = `${day.wind_speed} m/s`;
         const _day = [data, tempMax, tempMin, vitezaVant];
 
         table.push(_day);
       });
       console.log(table);
-      const tableContainer = document.getElementById('table');
-      console.log(table.genTable())
+      const tableContainer = document.getElementById("table");
       tableContainer.innerHTML = table.genTable();
     });
 }
